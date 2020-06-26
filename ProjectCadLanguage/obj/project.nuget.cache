@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "jjiouKvdcz8NWov8Pim1suQ8+WkvCPyKcEtWH5SaszWJdRLTQZPHVySMnUjm39jjfBLm3hIMZLIdiSrAIb62Dw==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\Thomas\\Source\\Repos\\project_cad\\ProjectCadLanguage\\ProjectCadLanguage.fsproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Thomas\\.nuget\\packages\\fsharp.core\\4.7.1\\fsharp.core.4.7.1.nupkg.sha512",
+    "C:\\Users\\Thomas\\.nuget\\packages\\microsoft.netcore.platforms\\1.1.0\\microsoft.netcore.platforms.1.1.0.nupkg.sha512",
+    "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder\\netstandard.library\\2.0.3\\netstandard.library.2.0.3.nupkg.sha512"
+  ],
+  "logs": []
+}

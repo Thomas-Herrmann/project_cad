@@ -1,0 +1,8 @@
+C:\Users\Thomas\Source\Repos\project_cad\ProjectCadLanguage\bin\Debug\netstandard2.0\ProjectCadLanguage.deps.json
+C:\Users\Thomas\Source\Repos\project_cad\ProjectCadLanguage\bin\Debug\netstandard2.0\ProjectCadLanguage.dll
+C:\Users\Thomas\Source\Repos\project_cad\ProjectCadLanguage\bin\Debug\netstandard2.0\ProjectCadLanguage.pdb
+C:\Users\Thomas\Source\Repos\project_cad\ProjectCadLanguage\obj\Debug\netstandard2.0\ProjectCadLanguage.fsprojAssemblyReference.cache
+C:\Users\Thomas\Source\Repos\project_cad\ProjectCadLanguage\obj\Debug\netstandard2.0\ProjectCadLanguage.AssemblyInfoInputs.cache
+C:\Users\Thomas\Source\Repos\project_cad\ProjectCadLanguage\obj\Debug\netstandard2.0\ProjectCadLanguage.AssemblyInfo.fs
+C:\Users\Thomas\Source\Repos\project_cad\ProjectCadLanguage\obj\Debug\netstandard2.0\ProjectCadLanguage.dll
+C:\Users\Thomas\Source\Repos\project_cad\ProjectCadLanguage\obj\Debug\netstandard2.0\ProjectCadLanguage.pdb
