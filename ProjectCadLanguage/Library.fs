@@ -127,14 +127,14 @@ module Language =
         | Power, None, v ->
             let comp v1 v2 =
                 match v1, v2 with
-                | NumValue n1, NumValue n2 -> NumValue (DecimalMath.precisionPower n1 n2 12)
+                | NumValue n1, NumValue n2 -> NumValue (DecimalMath.precisionPower n1 n2 0.0000001)
                 | _ -> failwithf "+ cannot be applied to a non-decimal value."
             in ConstantValue (c, Some (comp v))
 
         | Root, None, v ->
             let comp v1 v2 =
                 match v1, v2 with
-                | NumValue n1, NumValue n2 -> NumValue (DecimalMath.precisionRoot n1 n2 12)
+                | NumValue n1, NumValue n2 -> NumValue (DecimalMath.precisionRoot n1 n2 0.0000001)
                 | _ -> failwithf "+ cannot be applied to a non-decimal value."
             in ConstantValue (c, Some (comp v))
 
@@ -188,4 +188,4 @@ module Language =
     let exampleEnv = Map.empty : Env
     let exampleAST = AppExp ((AppExp ((ConstExp Less), (NumExp 50M))), (NumExp 20M))
     let exampleAST2 = GuardExp ((Some (AppExp ((AppExp (ConstExp Land, ConstExp True)), ConstExp True)), NumExp 1337M) :: [((None : Exp Option), NumExp 420M)])
-    let exampleAST3 = AppExp (AppExp (ConstExp Root, NumExp 10M), NumExp 0.222M) 
+    let exampleAST3 = AppExp (AppExp (ConstExp Power, NumExp 1000M), NumExp 0.333333333M) 
