@@ -2,9 +2,10 @@
 
 open Microsoft.FSharp.Collections
 open System
+open DecimalMath
 
 type Constant = True | False | Not | Less | Greater | LessEq | GreaterEq | Eq | NotEq | Land | Lor // Boolean operators
-              | Plus | Minus | UnaryMinus | Multiplication | Division | Power              // Arithmetic operators
+              | Plus | Minus | UnaryMinus | Multiplication | Division | Power | Root             // Arithmetic operators
               // Matrix operators
 
 type Exp = NumExp of decimal
@@ -37,13 +38,14 @@ module Language =
     let applyConstant c v' v2 = 
         match c, v', v2 with
         | Not, None, BooleanValue b -> BooleanValue (not b)
+        | UnaryMinus, None, NumValue n -> NumValue (-n)
+
         | Less, None, v ->
             let comp v1 v2 = 
                 match v1, v2 with 
                 | NumValue n1, NumValue n2 -> if Decimal.Compare(n1, n2) < 0 then BooleanValue true else BooleanValue false
                 | _ -> failwithf "< cannot be applied to a non-decimal value."
             in ConstantValue (c, Some (comp v))
-        | Less, Some f, v -> f v
 
         | Greater, None, v ->
             let comp v1 v2 = 
@@ -51,7 +53,6 @@ module Language =
                 | NumValue n1, NumValue n2 -> if Decimal.Compare(n1, n2) > 0 then BooleanValue true else BooleanValue false
                 | _ -> failwithf "> cannot be applied to a non-decimal value."
             in ConstantValue (c, Some (comp v))
-        | Greater, Some f, v -> f v
 
         | LessEq, None, v ->
             let comp v1 v2 = 
@@ -59,7 +60,6 @@ module Language =
                 | NumValue n1, NumValue n2 -> if Decimal.Compare(n1, n2) <= 0 then BooleanValue true else BooleanValue false
                 | _ -> failwithf "<= cannot be applied to a non-decimal value."
             in ConstantValue (c, Some (comp v))
-        | LessEq, Some f, v -> f v
 
         | GreaterEq, None, v ->
             let comp v1 v2 = 
@@ -67,7 +67,6 @@ module Language =
                 | NumValue n1, NumValue n2 -> if Decimal.Compare(n1, n2) >= 0 then BooleanValue true else BooleanValue false
                 | _ -> failwithf ">= cannot be applied to a non-decimal value."
             in ConstantValue (c, Some (comp v))
-        | GreaterEq, Some f, v -> f v
 
         | Eq, None, v ->
             let comp v1 v2 = 
@@ -75,7 +74,6 @@ module Language =
                 | NumValue n1, NumValue n2 -> if Decimal.Compare(n1, n2) = 0 then BooleanValue true else BooleanValue false
                 | _ -> failwithf "== cannot be applied to a non-decimal value."
             in ConstantValue (c, Some (comp v))
-        | Eq, Some f, v -> f v
 
         | NotEq, None, v ->
             let comp v1 v2 = 
@@ -83,7 +81,6 @@ module Language =
                 | NumValue n1, NumValue n2 -> if Decimal.Compare(n1, n2) <> 0 then BooleanValue true else BooleanValue false
                 | _ -> failwithf "<> cannot be applied to a non-decimal value."
             in ConstantValue (c, Some (comp v))
-        | NotEq, Some f, v -> f v
 
         | Land, None, v ->
             let comp v1 v2 = 
@@ -91,7 +88,6 @@ module Language =
                 | BooleanValue b1, BooleanValue b2 -> if b1 && b2 then BooleanValue true else BooleanValue false
                 | _ -> failwithf "^ cannot be applied to a non-boolean value."
             in ConstantValue (c, Some (comp v))
-        | Land, Some f, v -> f v
 
         | Lor, None, v ->
                    let comp v1 v2 = 
@@ -99,17 +95,59 @@ module Language =
                        | BooleanValue b1, BooleanValue b2 -> if b1 || b2 then BooleanValue true else BooleanValue false
                        | _ -> failwithf "v cannot be applied to a non-boolean value."
                    in ConstantValue (c, Some (comp v))
-        | Lor, Some f, v -> f v
+
+        | Plus, None, v ->
+                let comp v1 v2 =
+                    match v1, v2 with
+                    | NumValue n1, NumValue n2 -> NumValue (n1 + n2)
+                    | _ -> failwithf "+ cannot be applied to a non-decimal value."
+                in ConstantValue (c, Some (comp v))
+
+        | Minus, None, v ->
+            let comp v1 v2 =
+                match v1, v2 with
+                | NumValue n1, NumValue n2 -> NumValue (n1 - n2)
+                | _ -> failwithf "+ cannot be applied to a non-decimal value."
+            in ConstantValue (c, Some (comp v))
+
+        | Multiplication, None, v ->
+            let comp v1 v2 =
+                match v1, v2 with
+                | NumValue n1, NumValue n2 -> NumValue (n1 * n2)
+                | _ -> failwithf "+ cannot be applied to a non-decimal value."
+            in ConstantValue (c, Some (comp v))
+        
+        | Division, None, v ->
+            let comp v1 v2 =
+                match v1, v2 with
+                | NumValue n1, NumValue n2 -> NumValue (n1 / n2)
+                | _ -> failwithf "+ cannot be applied to a non-decimal value."
+            in ConstantValue (c, Some (comp v))
+
+        | Power, None, v ->
+            let comp v1 v2 =
+                match v1, v2 with
+                | NumValue n1, NumValue n2 -> NumValue (DecimalMath.precisionPower n1 n2 12)
+                | _ -> failwithf "+ cannot be applied to a non-decimal value."
+            in ConstantValue (c, Some (comp v))
+
+        | Root, None, v ->
+            let comp v1 v2 =
+                match v1, v2 with
+                | NumValue n1, NumValue n2 -> NumValue (DecimalMath.precisionRoot n1 n2 12)
+                | _ -> failwithf "+ cannot be applied to a non-decimal value."
+            in ConstantValue (c, Some (comp v))
 
         // TODO: more cases ..
 
+        | _, Some f, v -> f v
         | _, _, _ -> failwithf "Cannot apply function to this type of value." // TODO: better error message 
 
 
     let rec interpret (env : Env) e =
         match e with
-            | NumExp n       -> NumValue n
-            | ConstExp c     -> 
+            | NumExp n   -> NumValue n
+            | ConstExp c -> 
                 match c with 
                 | True  -> BooleanValue true
                 | False -> BooleanValue false
@@ -150,3 +188,4 @@ module Language =
     let exampleEnv = Map.empty : Env
     let exampleAST = AppExp ((AppExp ((ConstExp Less), (NumExp 50M))), (NumExp 20M))
     let exampleAST2 = GuardExp ((Some (AppExp ((AppExp (ConstExp Land, ConstExp True)), ConstExp True)), NumExp 1337M) :: [((None : Exp Option), NumExp 420M)])
+    let exampleAST3 = AppExp (AppExp (ConstExp Root, NumExp 10M), NumExp 0.222M) 

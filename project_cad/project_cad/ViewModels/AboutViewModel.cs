@@ -10,7 +10,7 @@ namespace project_cad.ViewModels
     {
         public AboutViewModel()
         {
-            Title = Language.valueToString(Language.interpret(Language.exampleEnv, Language.exampleAST2));
+            Title = Language.valueToString(Language.interpret(Language.exampleEnv, Language.exampleAST3));
             OpenWebCommand = new Command(async () => await Browser.OpenAsync("https://xamarin.com"));
         }
 
