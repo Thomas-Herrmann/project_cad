@@ -6,7 +6,7 @@ open DecimalMath
 
 type Constant = True | False | Not | Less | Greater | LessEq | GreaterEq | Eq | NotEq | Land | Lor // Boolean operators
               | Plus | Minus | UnaryMinus | Multiplication | Division | Power | Root             // Arithmetic operators
-              // Matrix operators
+              | Subscript | Column // Matrix operators
 
 type Exp = NumExp of decimal
          | ConstExp of Constant
@@ -26,7 +26,7 @@ type Env = Map<string, Value>
 
 
 
-module Language =
+module Language = // TODO: arithmetic operators on matrices
 
     let valueToString = function
         | NumValue n -> n.ToString()
@@ -100,6 +100,11 @@ module Language =
                 let comp v1 v2 =
                     match v1, v2 with
                     | NumValue n1, NumValue n2 -> NumValue (n1 + n2)
+                    | NumValue n, MatrixValue (m, r, c) | MatrixValue (m, r, c), NumValue n ->
+                        let f = function 
+                            | NumValue n' -> NumValue (n + n') 
+                            | _ -> failwithf "+ cannot be applied to a non-decimal matrix."
+                        in MatrixValue (Array2D.map f m, r, c)
                     | _ -> failwithf "+ cannot be applied to a non-decimal value."
                 in ConstantValue (c, Some (comp v))
 
@@ -107,38 +112,107 @@ module Language =
             let comp v1 v2 =
                 match v1, v2 with
                 | NumValue n1, NumValue n2 -> NumValue (n1 - n2)
-                | _ -> failwithf "+ cannot be applied to a non-decimal value."
+                | NumValue n, MatrixValue (m, r, c) ->
+                    let f = function
+                        | NumValue n' -> NumValue (n - n')
+                        | _ -> failwithf "- cannot be applied to a non-decimal matrix."
+                    in MatrixValue (Array2D.map f m, r, c)
+                | MatrixValue (m, r, c), NumValue n ->
+                    let f = function
+                        | NumValue n' -> NumValue (n' - n)
+                        | _ -> failwithf "- cannot be applied to a non-decimal matrix."
+                    in MatrixValue (Array2D.map f m, r, c)
+                | _ -> failwithf "- cannot be applied to a non-decimal value."
             in ConstantValue (c, Some (comp v))
 
         | Multiplication, None, v ->
             let comp v1 v2 =
                 match v1, v2 with
                 | NumValue n1, NumValue n2 -> NumValue (n1 * n2)
-                | _ -> failwithf "+ cannot be applied to a non-decimal value."
+                | NumValue n, MatrixValue (m, r, c) | MatrixValue (m, r, c), NumValue n ->
+                    let f = function 
+                        | NumValue n' -> NumValue (n * n') 
+                        | _ -> failwithf "* cannot be applied to a non-decimal matrix."
+                    in MatrixValue (Array2D.map f m, r, c)
+                | _ -> failwithf "* cannot be applied to a non-decimal value."
             in ConstantValue (c, Some (comp v))
         
         | Division, None, v ->
             let comp v1 v2 =
                 match v1, v2 with
                 | NumValue n1, NumValue n2 -> NumValue (n1 / n2)
-                | _ -> failwithf "+ cannot be applied to a non-decimal value."
+                | NumValue n, MatrixValue (m, r, c) ->
+                    let f = function
+                        | NumValue n' -> NumValue (n / n')
+                        | _ -> failwithf "/ cannot be applied to a non-decimal matrix."
+                    in MatrixValue (Array2D.map f m, r, c)
+                | MatrixValue (m, r, c), NumValue n ->
+                    let f = function
+                        | NumValue n' -> NumValue (n' / n)
+                        | _ -> failwithf "/ cannot be applied to a non-decimal matrix."
+                    in MatrixValue (Array2D.map f m, r, c)
+                | _ -> failwithf "/ cannot be applied to a non-decimal value."
             in ConstantValue (c, Some (comp v))
 
         | Power, None, v ->
             let comp v1 v2 =
                 match v1, v2 with
                 | NumValue n1, NumValue n2 -> NumValue (DecimalMath.precisionPower n1 n2 0.0000001)
-                | _ -> failwithf "+ cannot be applied to a non-decimal value."
+                | NumValue n, MatrixValue (m, r, c) ->
+                    let f = function
+                        | NumValue n' -> NumValue (DecimalMath.precisionPower n n' 0.0000001)
+                        | _ -> failwithf "** cannot be applied to a non-decimal matrix."
+                    in MatrixValue (Array2D.map f m, r, c)
+                | MatrixValue (m, r, c), NumValue n ->
+                    let f = function
+                        | NumValue n' -> NumValue (DecimalMath.precisionPower n' n 0.0000001)
+                        | _ -> failwithf "** cannot be applied to a non-decimal matrix."
+                    in MatrixValue (Array2D.map f m, r, c)
+                | _ -> failwithf "** cannot be applied to a non-decimal value."
             in ConstantValue (c, Some (comp v))
 
         | Root, None, v ->
             let comp v1 v2 =
                 match v1, v2 with
                 | NumValue n1, NumValue n2 -> NumValue (DecimalMath.precisionRoot n1 n2 0.0000001)
-                | _ -> failwithf "+ cannot be applied to a non-decimal value."
+                | NumValue n, MatrixValue (m, r, c) ->
+                    let f = function
+                        | NumValue n' -> NumValue (DecimalMath.precisionRoot n n' 0.0000001)
+                        | _ -> failwithf "Root cannot be applied to a non-decimal matrix."
+                    in MatrixValue (Array2D.map f m, r, c)
+                | MatrixValue (m, r, c), NumValue n ->
+                    let f = function
+                        | NumValue n' -> NumValue (DecimalMath.precisionRoot n' n 0.0000001)
+                        | _ -> failwithf "Root cannot be applied to a non-decimal matrix."
+                    in MatrixValue (Array2D.map f m, r, c)
+                | _ -> failwithf "Root cannot be applied to a non-decimal value."
             in ConstantValue (c, Some (comp v))
 
-        // TODO: more cases ..
+        | Subscript, None, v ->
+            let comp v1 v2 =
+                match v1, v2 with
+                | MatrixValue (m, r, c), NumValue n -> 
+                    if Decimal.Round(n) = n 
+                    then let row = Decimal.ToInt32(n) 
+                         in if c = 1 
+                            then m.[row, 0]
+                            else MatrixValue (array2D [| for i in 0..c -> [| m.[row, i]|] |], 1, c)
+                    else failwithf "Subscript index must be an integer."
+                | _ -> failwithf "Subscript cannot be applied to a non-matrix value."
+            in ConstantValue (c, Some (comp v))
+
+        | Column, None, v ->
+            let comp v1 v2 =
+                match v1, v2 with
+                | MatrixValue (m, r, c), NumValue n -> 
+                    if Decimal.Round(n) = n 
+                    then let col = Decimal.ToInt32(n) 
+                         in if r = 1 
+                            then m.[0, col]
+                            else MatrixValue (array2D [| for i in 0..c -> [| m.[i, col]|] |], 1, c)
+                    else failwithf "Column index must be an integer."
+                | _ -> failwithf "Column cannot be applied to a non-matrix value."
+            in ConstantValue (c, Some (comp v))
 
         | _, Some f, v -> f v
         | _, _, _ -> failwithf "Cannot apply function to this type of value." // TODO: better error message 
@@ -171,7 +245,7 @@ module Language =
                 | _ -> failwithf "Cannot apply a non-function value."
 
             | MatrixExp (es, r, c) ->
-                let rows = [for i in 0..r -> [for j in 0..c -> interpret env es.[i, j]]]
+                let rows = [| for i in 0..r -> [| for j in 0..c -> interpret env es.[i, j] |] |]
                 in MatrixValue (array2D rows, r, c)
 
             | GuardExp cases ->
