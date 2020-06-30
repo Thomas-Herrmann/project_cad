@@ -28,12 +28,16 @@ type Env = Map<string, Value>
 
 module Language = // TODO: arithmetic operators on matrices
 
-    let valueToString = function
+    let rec valueToString = function
         | NumValue n -> n.ToString()
         | ConstantValue (c, _) -> "TODO"
         | FunValue (x, _) -> "fun x"
-        | MatrixValue (vs, _, _) -> vs.ToString()
-        | BooleanValue b -> if b then "true" else "false" 
+        | BooleanValue b -> if b then "true" else "false"
+        | MatrixValue (vs, r, c) -> 
+            seq { for i in 0..r-1 ->
+                    let row = seq { for j in 0..c-1 -> (valueToString (vs.[i, j])) + " " } 
+                    in Seq.append row ["; "] |> String.Concat
+                } |> String.Concat
 
     let applyConstant c v' v2 = 
         match c, v', v2 with
@@ -105,6 +109,13 @@ module Language = // TODO: arithmetic operators on matrices
                             | NumValue n' -> NumValue (n + n') 
                             | _ -> failwithf "+ cannot be applied to a non-decimal matrix."
                         in MatrixValue (Array2D.map f m, r, c)
+                    | MatrixValue (m1, r1, c1), MatrixValue (m2, r2, c2) ->
+                        if r1 = r2 && c1 = c2
+                        then let f = function
+                                | NumValue n1, NumValue n2 -> NumValue (n1 + n2)
+                                | _ -> failwithf "+ cannot be applied to a non-decimal matrix."
+                             in MatrixValue (array2D [| for i in 0..r1-1 -> [| for j in 0..c1-1 -> f(m1.[i, j], m2.[i, j]) |] |] , r1, c1)
+                        else failwithf "+ cannot be applied to matrices with non-matching dimensions."
                     | _ -> failwithf "+ cannot be applied to a non-decimal value."
                 in ConstantValue (c, Some (comp v))
 
@@ -122,6 +133,13 @@ module Language = // TODO: arithmetic operators on matrices
                         | NumValue n' -> NumValue (n' - n)
                         | _ -> failwithf "- cannot be applied to a non-decimal matrix."
                     in MatrixValue (Array2D.map f m, r, c)
+                | MatrixValue (m1, r1, c1), MatrixValue (m2, r2, c2) ->
+                    if r1 = r2 && c1 = c2
+                    then let f = function
+                            | NumValue n1, NumValue n2 -> NumValue (n1 - n2)
+                            | _ -> failwithf "- cannot be applied to a non-decimal matrix."
+                         in MatrixValue (array2D [| for i in 0..r1-1 -> [| for j in 0..c1-1 -> f(m1.[i, j], m2.[i, j]) |] |] , r1, c1)
+                    else failwithf "- cannot be applied to matrices with non-matching dimensions."
                 | _ -> failwithf "- cannot be applied to a non-decimal value."
             in ConstantValue (c, Some (comp v))
 
@@ -134,6 +152,13 @@ module Language = // TODO: arithmetic operators on matrices
                         | NumValue n' -> NumValue (n * n') 
                         | _ -> failwithf "* cannot be applied to a non-decimal matrix."
                     in MatrixValue (Array2D.map f m, r, c)
+                | MatrixValue (m1, r1, c1), MatrixValue (m2, r2, c2) ->
+                    if c1 = r2
+                    then let f = function
+                            | NumValue n1, NumValue n2 -> n1 * n2
+                            | _ -> failwithf "* cannot be applied to non-decimal matrices."
+                         in MatrixValue (array2D [| for i in 0..r1-1 -> [| for j in 0..c2-1 -> NumValue (Array.fold (+) 0M [| for k in 0..c1-1 -> f(m1.[i, k], m2.[k, j]) |]) |] |], r1, c2)
+                    else failwithf "* cannot be applied to matrices with non-matching dimensions."
                 | _ -> failwithf "* cannot be applied to a non-decimal value."
             in ConstantValue (c, Some (comp v))
         
@@ -196,7 +221,7 @@ module Language = // TODO: arithmetic operators on matrices
                     then let row = Decimal.ToInt32(n) 
                          in if c = 1 
                             then m.[row, 0]
-                            else MatrixValue (array2D [| for i in 0..c -> [| m.[row, i]|] |], 1, c)
+                            else MatrixValue (array2D [| [| for i in 0..c-1 -> m.[row, i] |] |], 1, c)
                     else failwithf "Subscript index must be an integer."
                 | _ -> failwithf "Subscript cannot be applied to a non-matrix value."
             in ConstantValue (c, Some (comp v))
@@ -209,7 +234,7 @@ module Language = // TODO: arithmetic operators on matrices
                     then let col = Decimal.ToInt32(n) 
                          in if r = 1 
                             then m.[0, col]
-                            else MatrixValue (array2D [| for i in 0..c -> [| m.[i, col]|] |], 1, c)
+                            else MatrixValue (array2D [| for i in 0..c-1 -> [| m.[i, col]|] |], 1, c)
                     else failwithf "Column index must be an integer."
                 | _ -> failwithf "Column cannot be applied to a non-matrix value."
             in ConstantValue (c, Some (comp v))
@@ -245,7 +270,7 @@ module Language = // TODO: arithmetic operators on matrices
                 | _ -> failwithf "Cannot apply a non-function value."
 
             | MatrixExp (es, r, c) ->
-                let rows = [| for i in 0..r -> [| for j in 0..c -> interpret env es.[i, j] |] |]
+                let rows = [| for i in 0..r-1 -> [| for j in 0..c-1 -> interpret env es.[i, j] |] |]
                 in MatrixValue (array2D rows, r, c)
 
             | GuardExp cases ->
@@ -262,4 +287,8 @@ module Language = // TODO: arithmetic operators on matrices
     let exampleEnv = Map.empty : Env
     let exampleAST = AppExp ((AppExp ((ConstExp Less), (NumExp 50M))), (NumExp 20M))
     let exampleAST2 = GuardExp ((Some (AppExp ((AppExp (ConstExp Land, ConstExp True)), ConstExp True)), NumExp 1337M) :: [((None : Exp Option), NumExp 420M)])
-    let exampleAST3 = AppExp (AppExp (ConstExp Power, NumExp 1000M), NumExp 0.333333333M) 
+    let exampleAST3 = AppExp (AppExp (ConstExp Power, NumExp 1000M), NumExp 0.333333333M)
+    let exampleAST4 = AppExp (AppExp (ConstExp Subscript, MatrixExp (array2D [| [| NumExp 1M; NumExp 2M |]; [| NumExp 3M; NumExp 4M |]; [| NumExp 5M; NumExp 6M |] |], 3, 2)), NumExp 2M)
+    let exampleAST5 = AppExp (AppExp (ConstExp Multiplication, NumExp 53M), MatrixExp (array2D [| [| NumExp 1M; NumExp 2M |]; [| NumExp 3M; NumExp 4M |]; [| NumExp 5M; NumExp 6M |] |], 3, 2))
+    let exampleAST6 = MatrixExp (array2D [| [| NumExp 1M; NumExp 2M |]; [| NumExp 3M; NumExp 4M |] |], 2, 2)
+    let exampleAST7 = AppExp (AppExp (ConstExp Multiplication, MatrixExp (array2D [| [| NumExp 1M; NumExp 2M |]; [| NumExp 3M; NumExp 4M |]; [| NumExp 5M; NumExp 6M |] |], 3, 2)),  MatrixExp (array2D [| [| NumExp 1M; NumExp 2M; NumExp 3M; NumExp 4M; NumExp 5M |]; [| NumExp 6M; NumExp 7M; NumExp 8M; NumExp 9M; NumExp 10M |] |], 2, 5))
