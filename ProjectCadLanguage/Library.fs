@@ -15,6 +15,7 @@ type Exp = NumExp of decimal
          | FunExp of string * Exp
          | MatrixExp of Exp[,] * int * int
          | GuardExp of (Option<Exp> * Exp) List
+         | HoleExp of int
 
 type Value = NumValue of decimal
            | ConstantValue of Constant * Option<Value -> Value>
@@ -23,7 +24,6 @@ type Value = NumValue of decimal
            | BooleanValue of bool
 
 type Env = Map<string, Value>
-
 
 
 module Language = // TODO: arithmetic operators on matrices
@@ -245,6 +245,7 @@ module Language = // TODO: arithmetic operators on matrices
 
     let rec interpret (env : Env) e =
         match e with
+            | HoleExp _  -> failwithf "Cannot interpret an empty expression." 
             | NumExp n   -> NumValue n
             | ConstExp c -> 
                 match c with 
