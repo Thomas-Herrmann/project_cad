@@ -6,10 +6,8 @@ C:\Users\Thomas\Source\Repos\project_cad\project_cad\project_cad\obj\Debug\netst
 C:\Users\Thomas\Source\Repos\project_cad\project_cad\project_cad\obj\Debug\netstandard2.0\App.xaml.g.cs
 C:\Users\Thomas\Source\Repos\project_cad\project_cad\project_cad\obj\Debug\netstandard2.0\Views\AboutPage.xaml.g.cs
 C:\Users\Thomas\Source\Repos\project_cad\project_cad\project_cad\obj\Debug\netstandard2.0\Views\ItemDetailPage.xaml.g.cs
-C:\Users\Thomas\Source\Repos\project_cad\project_cad\project_cad\obj\Debug\netstandard2.0\Views\ItemsPage.xaml.g.cs
 C:\Users\Thomas\Source\Repos\project_cad\project_cad\project_cad\obj\Debug\netstandard2.0\Views\MainPage.xaml.g.cs
 C:\Users\Thomas\Source\Repos\project_cad\project_cad\project_cad\obj\Debug\netstandard2.0\Views\MenuPage.xaml.g.cs
-C:\Users\Thomas\Source\Repos\project_cad\project_cad\project_cad\obj\Debug\netstandard2.0\Views\NewItemPage.xaml.g.cs
 C:\Users\Thomas\Source\Repos\project_cad\project_cad\project_cad\obj\Debug\netstandard2.0\project_cad.AssemblyInfoInputs.cache
 C:\Users\Thomas\Source\Repos\project_cad\project_cad\project_cad\obj\Debug\netstandard2.0\project_cad.AssemblyInfo.cs
 C:\Users\Thomas\Source\Repos\project_cad\project_cad\project_cad\obj\Debug\netstandard2.0\project_cad.csproj.CoreCompileInputs.cache
@@ -20,3 +18,7 @@ C:\Users\Thomas\Source\Repos\project_cad\project_cad\project_cad\obj\Debug\netst
 C:\Users\Thomas\Source\Repos\project_cad\project_cad\project_cad\bin\Debug\netstandard2.0\ProjectCadLanguage.dll
 C:\Users\Thomas\Source\Repos\project_cad\project_cad\project_cad\bin\Debug\netstandard2.0\ProjectCadLanguage.pdb
 C:\Users\Thomas\Source\Repos\project_cad\project_cad\project_cad\obj\Debug\netstandard2.0\project_cad.csproj.CopyComplete
+C:\Users\Thomas\Source\Repos\project_cad\project_cad\project_cad\obj\Debug\netstandard2.0\Views\DocumentPage.xaml.g.cs
+C:\Users\Thomas\Source\Repos\project_cad\project_cad\project_cad\obj\Debug\netstandard2.0\Views\DocumentsPage.xaml.g.cs
+C:\Users\Thomas\Source\Repos\project_cad\project_cad\project_cad\obj\Debug\netstandard2.0\Views\NewDocumentPage.xaml.g.cs
+C:\Users\Thomas\Source\Repos\project_cad\project_cad\project_cad\obj\Debug\netstandard2.0\Views\NewStatementPage.xaml.g.cs

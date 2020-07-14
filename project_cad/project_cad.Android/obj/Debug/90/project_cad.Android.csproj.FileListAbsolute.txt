@@ -475,3 +475,9 @@ C:\Users\Thomas\Source\Repos\project_cad\project_cad\project_cad.Android\obj\Deb
 C:\Users\Thomas\Source\Repos\project_cad\project_cad\project_cad.Android\obj\Debug\90\stamp\_GenerateJavaStubs.stamp
 C:\Users\Thomas\Source\Repos\project_cad\project_cad\project_cad.Android\obj\Debug\90\stamp\_GeneratePackageManagerJava.stamp
 C:\Users\Thomas\Source\Repos\project_cad\project_cad\project_cad.Android\obj\Debug\90\stamp\_ResolveLibraryProjectImports.stamp
+C:\Users\Thomas\Source\Repos\project_cad\project_cad\project_cad.Android\bin\Debug\ProjectCadLanguage.dll
+C:\Users\Thomas\Source\Repos\project_cad\project_cad\project_cad.Android\bin\Debug\ProjectCadLanguage.pdb
+C:\Users\Thomas\Source\Repos\project_cad\project_cad\project_cad.Android\obj\Debug\90\android\assets\FSharp.Core.dll
+C:\Users\Thomas\Source\Repos\project_cad\project_cad\project_cad.Android\obj\Debug\90\android\assets\ProjectCadLanguage.dll
+C:\Users\Thomas\Source\Repos\project_cad\project_cad\project_cad.Android\obj\Debug\90\android\assets\ProjectCadLanguage.pdb
+C:\Users\Thomas\Source\Repos\project_cad\project_cad\project_cad.Android\obj\Debug\90\android\assets\System.Runtime.Numerics.dll

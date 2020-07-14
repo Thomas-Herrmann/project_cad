@@ -13,7 +13,7 @@ namespace project_cad
         {
             InitializeComponent();
 
-            DependencyService.Register<MockDataStore>();
+            //DependencyService.Register<MockDataStore>(); TODO: add actual datastore
             MainPage = new MainPage();
         }
 

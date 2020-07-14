@@ -18,4 +18,22 @@
   <ItemGroup>
     <ProjectReference Include="..\..\ProjectCadLanguage\ProjectCadLanguage.fsproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Views\DocumentsPage.xaml.cs">
+      <DependentUpon>DocumentsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\NewDocumentPage.xaml.cs">
+      <DependentUpon>NewDocumentPage.xaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Views\DocumentPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\NewStatementPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
 </Project>
